@@ -9,9 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -22,15 +23,22 @@ public class UserController {
         return userService.getAllUser();
     }
 
-    @PostMapping("/add-user")
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        User newUser = userService.createUser(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    @GetMapping("/get-user/{id}")
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
-    @DeleteMapping("delete-user/{id}")
+    @PostMapping("/add-user")
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        User savedUser = userService.createUser(user);
+        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete-user/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok("User with id " + id + " has been deleted!");
     }
+
+
 }
