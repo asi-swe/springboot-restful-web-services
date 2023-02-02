@@ -1,6 +1,8 @@
 package com.sametibis.springbootrestfulwebservices.service.impl;
 
+import com.sametibis.springbootrestfulwebservices.dto.UserDto;
 import com.sametibis.springbootrestfulwebservices.entity.User;
+import com.sametibis.springbootrestfulwebservices.mapper.UserMapper;
 import com.sametibis.springbootrestfulwebservices.repository.UserRepository;
 import com.sametibis.springbootrestfulwebservices.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +18,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserDto createUser(UserDto userDto) {
+        // Convert UserDTO into User JPA Entity
+        User user = UserMapper.mapToUser(userDto);
+
+        // Save User JPA Entity to DB
+        User savedUser = userRepository.save(user);
+
+        // Convert saved User JPA Entity into UserDTO to give response to client
+        UserDto savedUserDto = UserMapper.mapToUserDto(savedUser);
+        return savedUserDto;
     }
 
     @Override
@@ -26,8 +36,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserDto> getUserById(Long id) {
+        User user = userRepository.findById(id).get();
+        return Optional.of(UserMapper.mapToUserDto(user));
     }
 
     @Override

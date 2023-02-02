@@ -1,5 +1,6 @@
 package com.sametibis.springbootrestfulwebservices.controller;
 
+import com.sametibis.springbootrestfulwebservices.dto.UserDto;
 import com.sametibis.springbootrestfulwebservices.entity.User;
 import com.sametibis.springbootrestfulwebservices.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/get-user/{id}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
+    public ResponseEntity<Optional<UserDto>> getUserById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
@@ -35,8 +36,8 @@ public class UserController {
 
 
     @PostMapping("/add-user")
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        User savedUser = userService.createUser(user);
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDTO) {
+        UserDto savedUser = userService.createUser(userDTO);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
