@@ -1,7 +1,6 @@
 package com.sametibis.springbootrestfulwebservices.controller;
 
 import com.sametibis.springbootrestfulwebservices.dto.UserDto;
-import com.sametibis.springbootrestfulwebservices.entity.User;
 import com.sametibis.springbootrestfulwebservices.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/get-all-users")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserDto>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
     }
 
@@ -29,8 +28,8 @@ public class UserController {
     }
 
     @GetMapping("/get-user-by-email")
-    public ResponseEntity<Optional<User>> getUserByEmail(@RequestParam String email) {
-        Optional<User> user = userService.findByEmail(email);
+    public ResponseEntity<Optional<UserDto>> getUserByEmail(@RequestParam String email) {
+        Optional<UserDto> user = userService.findByEmail(email);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -48,10 +47,10 @@ public class UserController {
     }
 
     @PutMapping("/update-user/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        user.setId(id);
-        User updatedUser = userService.updateUser(user);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+        userDto.setId(id);
+        UserDto updatedUserDto = userService.updateUser(userDto);
+        return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
     }
 
 
