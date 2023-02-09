@@ -2,6 +2,8 @@ package com.sametibis.springbootrestfulwebservices.service.impl;
 
 import com.sametibis.springbootrestfulwebservices.dto.UserDto;
 import com.sametibis.springbootrestfulwebservices.entity.User;
+import com.sametibis.springbootrestfulwebservices.exception.ResourceAlreadyExistException;
+import com.sametibis.springbootrestfulwebservices.exception.ResourceNotFoundException;
 import com.sametibis.springbootrestfulwebservices.mapper.UserMapperMapStruct;
 import com.sametibis.springbootrestfulwebservices.repository.UserRepository;
 import com.sametibis.springbootrestfulwebservices.service.UserService;
@@ -20,8 +22,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        // Convert UserDTO into User JPA Entity
 
+        // Check if user already exist
+        if(userRepository.findUserByEmail(userDto.getEmail()).isPresent())
+            throw new ResourceAlreadyExistException("User", "email", userDto.getEmail());
+
+        // Convert UserDTO into User JPA Entity
         User user = UserMapperMapStruct.MAPPER.mapToUser(userDto);
 
         // Save User JPA Entity to DB
@@ -29,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
         // Convert saved User JPA Entity into UserDTO to give response to client
         UserDto savedUserDto = UserMapperMapStruct.MAPPER.mapToUserDto(savedUser);
+
         return savedUserDto;
     }
 
@@ -40,19 +47,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> getUserById(Long id) {
-        User user = userRepository.findById(id).get();
-        return Optional.of(UserMapperMapStruct.MAPPER.mapToUserDto(user));
+    public UserDto getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return UserMapperMapStruct.MAPPER.mapToUserDto(user);
     }
 
     @Override
     public void deleteUser(Long id) {
+        User existUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         userRepository.deleteById(id);
     }
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        User existUser = userRepository.findById(userDto.getId()).get();
+        User existUser = userRepository.findById(userDto.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "id", userDto.getId()));
         existUser.setFirstName(userDto.getFirstName());
         existUser.setLastName(userDto.getLastName());
         existUser.setEmail(userDto.getEmail());
