@@ -2,6 +2,7 @@ package com.sametibis.springbootrestfulwebservices.controller;
 
 import com.sametibis.springbootrestfulwebservices.dto.UserDto;
 import com.sametibis.springbootrestfulwebservices.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class UserController {
 
 
     @PostMapping("/add-user")
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDTO) {
+    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDTO) {
         UserDto savedUser = userService.createUser(userDTO);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/update-user/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
         userDto.setId(id);
         UserDto updatedUserDto = userService.updateUser(userDto);
         return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
